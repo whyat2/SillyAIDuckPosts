@@ -1,0 +1,602 @@
+NOTE: This is just my interpretation of an attack from here https://github.com/splunk/attack_data/tree/master/datasets/attack_techniques/T1021.006/lateral_movement
+		after looking up what each thing did and how they work (Not created by myself while deeply tracking everything), 
+			so I apologize if any assumptions are slightly innaccurate
+
+Currently Engineer (red herring login into computer) & Scientist (red herring initial login)
+IT is evil guy in this example
+
+Hints:
+- Winrm stands for windows remote management
+- All users login to these computers through a "decently" secure application so it can be assumed 
+	login type 3 events with impersonation potentially are the person alluded to in the log
+		(depending on if the puzzle itself is a red herring)
+	- Also computer network addresses for login can't be traced to anything unfortunately 
+		(though would be useful in real world scenario)
+			(and yes I know fe80 but I am lazy and don't want to make new ones)
+Hints extra (for red herring dealing with):
+- Pay attention to computer logged into
+- Pay attention to time logged in/off
+
+To get to finished puzzle for people remove all in [[]] with \[\[.*?\]\] to nothing in find/replace,
+ removing the top text (not thing below), and removing the extra spacing to make more readible.
+
+Someone set off out Oxygen.exe process and almost killed us all!!!
+Figure out who was most likely to have done it given some of the login and sysmon logs we have given y'all
+
+Note: 
+Record numbers have been modified after data was lost to be chronologically consistent & nothing else
+Login GUIDs have been replaced by placeholders after a computer malfunction
+
+Do not assume there is significant meaning behind Login GUID or record numbers
+
+[[Red Herring Log Involving Log in/out of computer involving the computer relevant]]
+10/23/2026 06:00:05 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4624
+EventType=0
+Type=Information
+ComputerName=Medical-Computer.DuckCorporation.local
+TaskCategory=Logon
+OpCode=Info
+RecordNumber=1512111014
+Keywords=Audit Success
+Message=An account was successfully logged on.
+
+Subject:
+	Security ID:		NULL SID
+	Account Name:		-
+	Account Domain:		-
+	Logon ID:		0x0
+
+Logon Information:
+	Logon Type:		3
+	Restricted Admin Mode:	-
+	Virtual Account:		No
+	Elevated Token:		Yes
+
+Impersonation Level:		Impersonation
+
+New Logon:
+	Security ID:		S-1-5-21-1234567890-2345678901-3456789012-1001
+	Account Name:		Scientist
+	Account Domain:		DuckCorporation.local
+	Logon ID:		0x9968D6B
+	Linked Logon ID:		0x0
+	Network Account Name:	-
+	Network Account Domain:	-
+	Logon GUID:		{8E415A8E-7DE5-3ED8-5DDF-02AA51AE50E7}
+
+Process Information:
+	Process ID:		0x0
+	Process Name:		-
+
+Network Information:
+	Workstation Name:	-
+	Source Network Address:	fe80::b574:557a:2d92:ce62
+	Source Port:		51624
+
+Detailed Authentication Information:
+	Logon Process:		Kerberos
+	Authentication Package:	Kerberos
+	Transited Services:	-
+	Package Name (NTLM only):	-
+	Key Length:		0
+
+10/23/2026 06:01:00 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4634
+EventType=0
+Type=Information
+ComputerName=Medical-Computer.DuckCorporation.local
+TaskCategory=Logoff
+OpCode=Info
+RecordNumber=1512111020
+Keywords=Audit Success
+Message=An account was logged off.
+
+Subject:
+	Security ID:		S-1-5-21-1234567890-2345678901-3456789012-1001
+	Account Name:		Scientist
+	Account Domain:		DUCKCORPORATION
+	Logon ID:		0x9968D6B
+
+Logon Type:			3
+
+[[Shows who logged into the attackers first computer (over remote connection)]]
+10/23/2026 06:04:07 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4624
+EventType=0
+Type=Information
+ComputerName=Medical-Computer.DuckCorporation.local
+TaskCategory=Logon
+OpCode=Info
+RecordNumber=1512111026
+Keywords=Audit Success
+Message=An account was successfully logged on.
+
+Subject:
+	Security ID:		NULL SID
+	Account Name:		-
+	Account Domain:		-
+	Logon ID:		0x0
+
+Logon Information:
+	Logon Type:		3
+	Restricted Admin Mode:	-
+	Virtual Account:		No
+	Elevated Token:		Yes
+
+Impersonation Level:		Impersonation
+
+New Logon:
+	Security ID:		S-1-5-21-1234567890-2345678901-3456789012-1002
+	Account Name:		IT
+	Account Domain:		DuckCorporation.local
+	Logon ID:		0x9968C34
+	Linked Logon ID:		0x0
+	Network Account Name:	-
+	Network Account Domain:	-
+	Logon GUID:		{8E415A8E-7DE5-3ED8-5DDF-02AA51AE50E7}
+
+Process Information:
+	Process ID:		0x0
+	Process Name:		-
+
+Network Information:
+	Workstation Name:	-
+	Source Network Address:	fe80::b574:557a:2d92:ce61
+	Source Port:		51623
+
+Detailed Authentication Information:
+	Logon Process:		Kerberos
+	Authentication Package:	Kerberos
+	Transited Services:	-
+	Package Name (NTLM only):	-
+	Key Length:		0
+
+This event is generated when a logon session is created. It is generated on the computer that was accessed.
+
+The subject fields indicate the account on the local system which requested the logon. This is most commonly a service such as the Server service, or a local process such as Winlogon.exe or Services.exe.
+
+The logon type field indicates the kind of logon that occurred. The most common types are 2 (interactive) and 3 (network).
+
+The New Logon fields indicate the account for whom the new logon was created, i.e. the account that was logged on.
+
+The network fields indicate where a remote logon request originated. Workstation name is not always available and may be left blank in some cases.
+
+The impersonation level field indicates the extent to which a process in the logon session can impersonate.
+
+The authentication information fields provide detailed information about this specific logon request.
+	- Logon GUID is a unique identifier that can be used to correlate this event with a KDC event.
+	- Transited services indicate which intermediate services have participated in this logon request.
+	- Package name indicates which sub-protocol was used among the NTLM protocols.
+	- Key length indicates the length of the generated session key. This will be 0 if no session key was requested.
+
+
+
+
+
+[[Running of winrs command on the original computer]]
+10/23/2026 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4688
+EventType=0
+Type=Information
+ComputerName=Medical-Computer.DuckCorporation.local
+TaskCategory=Process Creation
+OpCode=Info
+RecordNumber=1512111036
+Keywords=Audit Success
+Message=A new process has been created.
+
+Creator Subject:
+	Security ID:		[REDACTED/LOST BYTES]
+	Account Name:		[REDACTED/LOST BYTES]
+	Account Domain:		DUCKCORPORATION
+	Logon ID:		0x809F9
+
+Target Subject:
+	Security ID:		NULL SID
+	Account Name:		-
+	Account Domain:		-
+	Logon ID:		0x0
+
+Process Information:
+	New Process ID:		0xe00
+	New Process Name:	C:\Windows\System32\winrs.exe
+	Token Elevation Type:	%%1936
+	Mandatory Label:		Mandatory Label\High Mandatory Level
+	Creator Process ID:	0x17c0
+	Creator Process Name:	C:\Windows\System32\cmd.exe
+	Process Command Line:	winrs  -r:Oxygen-Controller.DuckCorporation.local "Oxygen"
+
+Token Elevation Type indicates the type of token that was assigned to the new process in accordance with User Account Control policy.
+
+Type 1 is a full token with no privileges removed or groups disabled.  A full token is only used if User Account Control is disabled or if the user is the built-in Administrator account or a service account.
+
+Type 2 is an elevated token with no privileges removed or groups disabled.  An elevated token is used when User Account Control is enabled and the user chooses to start the program using Run as administrator.  An elevated token is also used when an application is configured to always require administrative privilege or to always require maximum privilege, and the user is a member of the Administrators group.
+
+Type 3 is a limited token with administrative privileges removed and administrative groups disabled.  The limited token is used when User Account Control is enabled, the application does not require administrative privilege, and the user does not choose to start the program using Run as administrator.
+
+
+
+
+
+
+[[Connection allowed, then binding to port in the original computer via winrs]]
+
+10/23/2026 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=5156
+EventType=0
+Type=Information
+ComputerName=Medical-Computer.DuckCorporation.local
+TaskCategory=Filtering Platform Connection
+OpCode=Info
+RecordNumber=1512111043
+Keywords=Audit Success
+Message=The Windows Filtering Platform has permitted a connection.
+
+Application Information:
+	Process ID:		3584
+	Application Name:	\device\harddiskvolume1\windows\system32\winrs.exe
+
+Network Information:
+	Direction:		Outbound
+	Source Address:		10.0.1.14
+	Source Port:		51627
+	Destination Address:	10.0.1.15
+	Destination Port:		5985
+	Protocol:		6
+
+Filter Information:
+	Filter Run-Time ID:	68192
+	Layer Name:		Connect
+	Layer Run-Time ID:	48
+10/23/2026 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=5158
+EventType=0
+Type=Information
+ComputerName=Medical-Computer.DuckCorporation.local
+TaskCategory=Filtering Platform Connection
+OpCode=Info
+RecordNumber=1512111042
+Keywords=Audit Success
+Message=The Windows Filtering Platform has permitted a bind to a local port.
+
+Application Information:
+	Process ID:		3584
+	Application Name:	\device\harddiskvolume1\windows\system32\winrs.exe
+
+Network Information:
+	Source Address:		0.0.0.0
+	Source Port:		51627
+	Protocol:		6
+
+Filter Information:
+	Filter Run-Time ID:	0
+	Layer Name:		Resource Assignment
+	Layer Run-Time ID:	36
+
+
+
+
+
+
+
+
+
+[[RDP into the machine from login log]]
+10/23/2026 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4624
+EventType=0
+Type=Information
+ComputerName=Oxygen-Controller.DuckCorporation.local
+TaskCategory=Logon
+OpCode=Info
+RecordNumber=3702903
+Keywords=Audit Success
+Message=An account was successfully logged on.
+
+Subject:
+	Security ID:		NULL SID
+	Account Name:		-
+	Account Domain:		-
+	Logon ID:		0x0
+
+Logon Information:
+	Logon Type:		3
+	Restricted Admin Mode:	-
+	Virtual Account:		No
+	Elevated Token:		Yes
+
+Impersonation Level:		Impersonation
+
+New Logon:
+	Security ID:		[REDACTED/LOST BYTES]
+	Account Name:		[REDACTED/LOST BYTES]
+	Account Domain:		DuckCorporation.local
+	Logon ID:		0xA78EA19
+	Linked Logon ID:		0x0
+	Network Account Name:	-
+	Network Account Domain:	-
+	Logon GUID:		{9825E01B-8303-8BF8-C4CD-5CD190000E66}
+
+Process Information:
+	Process ID:		0x0
+	Process Name:		-
+
+Network Information:
+	Workstation Name:	-
+	Source Network Address:	-
+	Source Port:		-
+
+Detailed Authentication Information:
+	Logon Process:		Kerberos
+	Authentication Package:	Kerberos
+	Transited Services:	-
+	Package Name (NTLM only):	-
+	Key Length:		0
+
+This event is generated when a logon session is created. It is generated on the computer that was accessed.
+
+The subject fields indicate the account on the local system which requested the logon. This is most commonly a service such as the Server service, or a local process such as Winlogon.exe or Services.exe.
+
+The logon type field indicates the kind of logon that occurred. The most common types are 2 (interactive) and 3 (network).
+
+The New Logon fields indicate the account for whom the new logon was created, i.e. the account that was logged on.
+
+The network fields indicate where a remote logon request originated. Workstation name is not always available and may be left blank in some cases.
+
+The impersonation level field indicates the extent to which a process in the logon session can impersonate.
+
+The authentication information fields provide detailed information about this specific logon request.
+	- Logon GUID is a unique identifier that can be used to correlate this event with a KDC event.
+	- Transited services indicate which intermediate services have participated in this logon request.
+	- Package name indicates which sub-protocol was used among the NTLM protocols.
+	- Key length indicates the length of the generated session key. This will be 0 if no session key was requested.
+
+
+[[Red herring where logon to computer involving thing is on]]
+10/23/2026 06:04:10 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4624
+EventType=0
+Type=Information
+ComputerName=Oxygen-Controller.DuckCorporation.local
+TaskCategory=Logon
+OpCode=Info
+RecordNumber=1512111048
+Keywords=Audit Success
+Message=An account was successfully logged on.
+
+Subject:
+	Security ID:		NULL SID
+	Account Name:		-
+	Account Domain:		-
+	Logon ID:		0x0
+
+Logon Information:
+	Logon Type:		3
+	Restricted Admin Mode:	-
+	Virtual Account:		No
+	Elevated Token:		Yes
+
+Impersonation Level:		Impersonation
+
+New Logon:
+	Security ID:		S-1-5-21-1234567890-2345678901-3456789012-1003
+	Account Name:		Engineer
+	Account Domain:		DuckCorporation.local
+	Logon ID:		0x9968D6C
+	Linked Logon ID:		0x0
+	Network Account Name:	-
+	Network Account Domain:	-
+	Logon GUID:		{8E415A8E-7DE5-3ED8-5DDF-02AA51AE50E7}
+
+Process Information:
+	Process ID:		0x0
+	Process Name:		-
+
+Network Information:
+	Workstation Name:	-
+	Source Network Address:	fe80::b574:557a:2d92:ce63
+	Source Port:		51628
+
+Detailed Authentication Information:
+	Logon Process:		Kerberos
+	Authentication Package:	Kerberos
+	Transited Services:	-
+	Package Name (NTLM only):	-
+	Key Length:		0
+
+[[maybe stuff like user program here -> Svchost (enters kernel level) -> winrshost -> conhost ]]
+   [[(a program that displays command-line (and handle other portions like stdin/stdout/stderr) on computer while actively running and force to execute command in V1 behavior]]
+[[winrshost -> cmd.exe -> Oxygen.exe]]
+
+
+10/23/2026 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4688
+EventType=0
+Type=Information
+ComputerName=Oxygen-Controller.DuckCorporation.local
+TaskCategory=Process Creation
+OpCode=Info
+RecordNumber=3702906
+Keywords=Audit Success
+Message=A new process has been created.
+
+Creator Subject:
+	Security ID:		NT AUTHORITY\SYSTEM
+	Account Name:		Oxygen-Controller$
+	Account Domain:		DUCKCORPORATION
+	Logon ID:		0x3E7
+
+Target Subject:
+	Security ID:		NULL SID
+	Account Name:		[REDACTED/LOST BYTES]
+	Account Domain:		DUCKCORPORATION
+	Logon ID:		0xA78EA19
+
+Process Information:
+	New Process ID:		0x68
+	New Process Name:	C:\Windows\System32\winrshost.exe
+	Token Elevation Type:	%%1936
+	Mandatory Label:		Mandatory Label\High Mandatory Level
+	Creator Process ID:	0x2dc
+	Creator Process Name:	C:\Windows\System32\svchost.exe
+	Process Command Line:	C:\Windows\system32\WinrsHost.exe -Embedding
+
+Token Elevation Type indicates the type of token that was assigned to the new process in accordance with User Account Control policy.
+
+Type 1 is a full token with no privileges removed or groups disabled.  A full token is only used if User Account Control is disabled or if the user is the built-in Administrator account or a service account.
+
+Type 2 is an elevated token with no privileges removed or groups disabled.  An elevated token is used when User Account Control is enabled and the user chooses to start the program using Run as administrator.  An elevated token is also used when an application is configured to always require administrative privilege or to always require maximum privilege, and the user is a member of the Administrators group.
+
+Type 3 is a limited token with administrative privileges removed and administrative groups disabled.  The limited token is used when User Account Control is enabled, the application does not require administrative privilege, and the user does not choose to start the program using Run as administrator.
+
+10/23/2026 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4688
+EventType=0
+Type=Information
+ComputerName=Oxygen-Controller.DuckCorporation.local
+TaskCategory=Process Creation
+OpCode=Info
+RecordNumber=3702907
+Keywords=Audit Success
+Message=A new process has been created.
+
+Creator Subject:
+	Security ID:		[REDACTED/LOST BYTES]
+	Account Name:		[REDACTED/LOST BYTES]
+	Account Domain:		DUCKCORPORATION
+	Logon ID:		0xA78EA19
+
+Target Subject:
+	Security ID:		NULL SID
+	Account Name:		-
+	Account Domain:		-
+	Logon ID:		0x0
+
+Process Information:
+	New Process ID:		0xa34
+	New Process Name:	C:\Windows\System32\conhost.exe
+	Token Elevation Type:	%%1936
+	Mandatory Label:		Mandatory Label\High Mandatory Level
+	Creator Process ID:	0x68
+	Creator Process Name:	C:\Windows\System32\winrshost.exe
+	Process Command Line:	\??\C:\Windows\system32\conhost.exe 0xffffffff -ForceV1
+
+Token Elevation Type indicates the type of token that was assigned to the new process in accordance with User Account Control policy.
+
+Type 1 is a full token with no privileges removed or groups disabled.  A full token is only used if User Account Control is disabled or if the user is the built-in Administrator account or a service account.
+
+Type 2 is an elevated token with no privileges removed or groups disabled.  An elevated token is used when User Account Control is enabled and the user chooses to start the program using Run as administrator.  An elevated token is also used when an application is configured to always require administrative privilege or to always require maximum privilege, and the user is a member of the Administrators group.
+
+Type 3 is a limited token with administrative privileges removed and administrative groups disabled.  The limited token is used when User Account Control is enabled, the application does not require administrative privilege, and the user does not choose to start the program using Run as administrator.
+
+10/23/2026 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4688
+EventType=0
+Type=Information
+ComputerName=Oxygen-Controller.DuckCorporation.local
+TaskCategory=Process Creation
+OpCode=Info
+RecordNumber=3702908
+Keywords=Audit Success
+Message=A new process has been created.
+
+Creator Subject:
+	Security ID:		[REDACTED/LOST BYTES]
+	Account Name:		[REDACTED/LOST BYTES]
+	Account Domain:		DUCKCORPORATION
+	Logon ID:		0xA78EA19
+
+Target Subject:
+	Security ID:		NULL SID
+	Account Name:		-
+	Account Domain:		-
+	Logon ID:		0x0
+
+Process Information:
+	New Process ID:		0x580
+	New Process Name:	C:\Windows\System32\cmd.exe
+	Token Elevation Type:	%%1936
+	Mandatory Label:		Mandatory Label\High Mandatory Level
+	Creator Process ID:	0x68
+	Creator Process Name:	C:\Windows\System32\winrshost.exe
+	Process Command Line:	C:\Windows\system32\cmd.exe /C "Oxygen"
+
+Token Elevation Type indicates the type of token that was assigned to the new process in accordance with User Account Control policy.
+
+Type 1 is a full token with no privileges removed or groups disabled.  A full token is only used if User Account Control is disabled or if the user is the built-in Administrator account or a service account.
+
+Type 2 is an elevated token with no privileges removed or groups disabled.  An elevated token is used when User Account Control is enabled and the user chooses to start the program using Run as administrator.  An elevated token is also used when an application is configured to always require administrative privilege or to always require maximum privilege, and the user is a member of the Administrators group.
+
+Type 3 is a limited token with administrative privileges removed and administrative groups disabled.  The limited token is used when User Account Control is enabled, the application does not require administrative privilege, and the user does not choose to start the program using Run as administrator.
+
+10/23/2026 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4688
+EventType=0
+Type=Information
+ComputerName=Oxygen-Controller.DuckCorporation.local
+TaskCategory=Process Creation
+OpCode=Info
+RecordNumber=3702909
+Keywords=Audit Success
+Message=A new process has been created.
+
+Creator Subject:
+	Security ID:		[REDACTED/LOST BYTES]
+	Account Name:		[REDACTED/LOST BYTES]
+	Account Domain:		DUCKCORPORATION
+	Logon ID:		0xA78EA19
+
+Target Subject:
+	Security ID:		NULL SID
+	Account Name:		-
+	Account Domain:		-
+	Logon ID:		0x0
+
+Process Information:
+	New Process ID:		0xa84
+	New Process Name:	C:\Windows\System32\Oxygen.exe
+	Token Elevation Type:	%%1936
+	Mandatory Label:		Mandatory Label\High Mandatory Level
+	Creator Process ID:	0x580
+	Creator Process Name:	C:\Windows\System32\cmd.exe
+	Process Command Line:	Oxygen
+
+Token Elevation Type indicates the type of token that was assigned to the new process in accordance with User Account Control policy.
+
+Type 1 is a full token with no privileges removed or groups disabled.  A full token is only used if User Account Control is disabled or if the user is the built-in Administrator account or a service account.
+
+Type 2 is an elevated token with no privileges removed or groups disabled.  An elevated token is used when User Account Control is enabled and the user chooses to start the program using Run as administrator.  An elevated token is also used when an application is configured to always require administrative privilege or to always require maximum privilege, and the user is a member of the Administrators group.
+
+Type 3 is a limited token with administrative privileges removed and administrative groups disabled.  The limited token is used when User Account Control is enabled, the application does not require administrative privilege, and the user does not choose to start the program using Run as administrator.
+
+
+
+
+
+
+

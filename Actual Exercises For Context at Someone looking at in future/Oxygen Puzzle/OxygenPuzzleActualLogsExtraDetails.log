@@ -1,0 +1,553 @@
+NOTE: Pay attention to timestamps as these are things that would fit inside the other regular logs.
+	These are logs that either don't convey a ton of new information and taken out for such reasons.
+		Excluded from these are the logs that forwarded these details to splunk and other portions of the attack (including a second winrs command & more like install)
+[[Extra login details involving the powers the person had on the original computer the attacker logged in at]]
+[[Including the lsass and svchost stuff that happened]]
+
+
+11/12/2021 06:04:07 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4672
+EventType=0
+Type=Information
+ComputerName=win-dc-128.attackrange.local
+TaskCategory=Special Logon
+OpCode=Info
+RecordNumber=1512111013
+Keywords=Audit Success
+Message=Special privileges assigned to new logon.
+
+Subject:
+	Security ID:		NT AUTHORITY\SYSTEM
+	Account Name:		WIN-DC-128$
+	Account Domain:		ATTACKRANGE
+	Logon ID:		0x9968D6B
+
+Privileges:		SeSecurityPrivilege
+			SeBackupPrivilege
+			SeRestorePrivilege
+			SeTakeOwnershipPrivilege
+			SeDebugPrivilege
+			SeSystemEnvironmentPrivilege
+			SeLoadDriverPrivilege
+			SeImpersonatePrivilege
+			SeDelegateSessionUserImpersonatePrivilege
+			SeEnableDelegationPrivilege
+11/12/2021 06:04:07 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=5156
+EventType=0
+Type=Information
+ComputerName=win-dc-128.attackrange.local
+TaskCategory=Filtering Platform Connection
+OpCode=Info
+RecordNumber=1512111012
+Keywords=Audit Success
+Message=The Windows Filtering Platform has permitted a connection.
+
+Application Information:
+	Process ID:		636
+	Application Name:	\device\harddiskvolume1\windows\system32\lsass.exe
+
+Network Information:
+	Direction:		Inbound
+	Source Address:		fe80::b574:557a:2d92:ce61
+	Source Port:		51623
+	Destination Address:	fe80::b574:557a:2d92:ce61
+	Destination Port:		389
+	Protocol:		6
+
+Filter Information:
+	Filter Run-Time ID:	65786
+	Layer Name:		Receive/Accept
+	Layer Run-Time ID:	46
+11/12/2021 06:04:07 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=5156
+EventType=0
+Type=Information
+ComputerName=win-dc-128.attackrange.local
+TaskCategory=Filtering Platform Connection
+OpCode=Info
+RecordNumber=1512111011
+Keywords=Audit Success
+Message=The Windows Filtering Platform has permitted a connection.
+
+Application Information:
+	Process ID:		1272
+	Application Name:	\device\harddiskvolume1\windows\system32\svchost.exe
+
+Network Information:
+	Direction:		Outbound
+	Source Address:		fe80::b574:557a:2d92:ce61
+	Source Port:		51623
+	Destination Address:	fe80::b574:557a:2d92:ce61
+	Destination Port:		389
+	Protocol:		6
+
+Filter Information:
+	Filter Run-Time ID:	65788
+	Layer Name:		Connect
+	Layer Run-Time ID:	50
+11/12/2021 06:04:07 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=5158
+EventType=0
+Type=Information
+ComputerName=win-dc-128.attackrange.local
+TaskCategory=Filtering Platform Connection
+OpCode=Info
+RecordNumber=1512111010
+Keywords=Audit Success
+Message=The Windows Filtering Platform has permitted a bind to a local port.
+
+Application Information:
+	Process ID:		1272
+	Application Name:	\device\harddiskvolume1\windows\system32\svchost.exe
+
+Network Information:
+	Source Address:		::
+	Source Port:		51623
+	Protocol:		6
+
+Filter Information:
+	Filter Run-Time ID:	0
+	Layer Name:		Resource Assignment
+	Layer Run-Time ID:	38
+
+
+
+
+[[Connection stuff that happened on original computer besides winrs to make connection work]]
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=5156
+EventType=0
+Type=Information
+ComputerName=win-dc-128.attackrange.local
+TaskCategory=Filtering Platform Connection
+OpCode=Info
+RecordNumber=1512111041
+Keywords=Audit Success
+Message=The Windows Filtering Platform has permitted a connection.
+
+Application Information:
+	Process ID:		2360
+	Application Name:	\device\harddiskvolume1\windows\system32\dns.exe
+
+Network Information:
+	Direction:		Inbound
+	Source Address:		::1
+	Source Port:		51003
+	Destination Address:	::1
+	Destination Port:		53
+	Protocol:		17
+
+Filter Information:
+	Filter Run-Time ID:	65786
+	Layer Name:		Receive/Accept
+	Layer Run-Time ID:	46
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=5156
+EventType=0
+Type=Information
+ComputerName=win-dc-128.attackrange.local
+TaskCategory=Filtering Platform Connection
+OpCode=Info
+RecordNumber=1512111040
+Keywords=Audit Success
+Message=The Windows Filtering Platform has permitted a connection.
+
+Application Information:
+	Process ID:		1056
+	Application Name:	\device\harddiskvolume1\windows\system32\svchost.exe
+
+Network Information:
+	Direction:		Outbound
+	Source Address:		::1
+	Source Port:		51003
+	Destination Address:	::1
+	Destination Port:		53
+	Protocol:		17
+
+Filter Information:
+	Filter Run-Time ID:	65788
+	Layer Name:		Connect
+	Layer Run-Time ID:	50
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=5158
+EventType=0
+Type=Information
+ComputerName=win-dc-128.attackrange.local
+TaskCategory=Filtering Platform Connection
+OpCode=Info
+RecordNumber=1512111039
+Keywords=Audit Success
+Message=The Windows Filtering Platform has permitted a bind to a local port.
+
+Application Information:
+	Process ID:		1056
+	Application Name:	\device\harddiskvolume1\windows\system32\svchost.exe
+
+Network Information:
+	Source Address:		::
+	Source Port:		51003
+	Protocol:		17
+
+Filter Information:
+	Filter Run-Time ID:	0
+	Layer Name:		Resource Assignment
+	Layer Run-Time ID:	38
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=5158
+EventType=0
+Type=Information
+ComputerName=win-dc-128.attackrange.local
+TaskCategory=Filtering Platform Connection
+OpCode=Info
+RecordNumber=1512111038
+Keywords=Audit Success
+Message=The Windows Filtering Platform has permitted a bind to a local port.
+
+Application Information:
+	Process ID:		1056
+	Application Name:	\device\harddiskvolume1\windows\system32\svchost.exe
+
+Network Information:
+	Source Address:		::
+	Source Port:		51003
+	Protocol:		17
+
+Filter Information:
+	Filter Run-Time ID:	0
+	Layer Name:		Resource Assignment
+	Layer Run-Time ID:	36
+
+
+
+
+
+[[Extra login information on target computer particularly the extra perms]]
+
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4672
+EventType=0
+Type=Information
+ComputerName=win-host-987.attackrange.local
+TaskCategory=Special Logon
+OpCode=Info
+RecordNumber=3702902
+Keywords=Audit Success
+Message=Special privileges assigned to new logon.
+
+Subject:
+	Security ID:		ATTACKRANGE\Administrator
+	Account Name:		Administrator
+	Account Domain:		ATTACKRANGE
+	Logon ID:		0xA78EA19
+
+Privileges:		SeSecurityPrivilege
+			SeBackupPrivilege
+			SeRestorePrivilege
+			SeTakeOwnershipPrivilege
+			SeDebugPrivilege
+			SeSystemEnvironmentPrivilege
+			SeLoadDriverPrivilege
+			SeImpersonatePrivilege
+			SeDelegateSessionUserImpersonatePrivilege
+
+
+
+
+
+[[DLL that gets launched at the same time as Winrshost likely to do something]]
+
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4688
+EventType=0
+Type=Information
+ComputerName=win-host-987.attackrange.local
+TaskCategory=Process Creation
+OpCode=Info
+RecordNumber=3702905
+Keywords=Audit Success
+Message=A new process has been created.
+
+Creator Subject:
+	Security ID:		NT AUTHORITY\SYSTEM
+	Account Name:		WIN-HOST-987$
+	Account Domain:		ATTACKRANGE
+	Logon ID:		0x3E7
+
+Target Subject:
+	Security ID:		NULL SID
+	Account Name:		-
+	Account Domain:		-
+	Logon ID:		0x0
+
+Process Information:
+	New Process ID:		0x12a0
+	New Process Name:	C:\Windows\System32\dllhost.exe
+	Token Elevation Type:	%%1936
+	Mandatory Label:		Mandatory Label\System Mandatory Level
+	Creator Process ID:	0x2dc
+	Creator Process Name:	C:\Windows\System32\svchost.exe
+	Process Command Line:	C:\Windows\system32\DllHost.exe /Processid:{E10F6C3A-F1AE-4ADC-AA9D-2FE65525666E}
+
+Token Elevation Type indicates the type of token that was assigned to the new process in accordance with User Account Control policy.
+
+Type 1 is a full token with no privileges removed or groups disabled.  A full token is only used if User Account Control is disabled or if the user is the built-in Administrator account or a service account.
+
+Type 2 is an elevated token with no privileges removed or groups disabled.  An elevated token is used when User Account Control is enabled and the user chooses to start the program using Run as administrator.  An elevated token is also used when an application is configured to always require administrative privilege or to always require maximum privilege, and the user is a member of the Administrators group.
+
+Type 3 is a limited token with administrative privileges removed and administrative groups disabled.  The limited token is used when User Account Control is enabled, the application does not require administrative privilege, and the user does not choose to start the program using Run as administrator.
+
+[[Command line closing on final target computer & winrshost closing]]
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4689
+EventType=0
+Type=Information
+ComputerName=win-host-987.attackrange.local
+TaskCategory=Process Termination
+OpCode=Info
+RecordNumber=3702913
+Keywords=Audit Success
+Message=A process has exited.
+
+Subject:
+	Security ID:		ATTACKRANGE\Administrator
+	Account Name:		Administrator
+	Account Domain:		ATTACKRANGE
+	Logon ID:		0xA78EA19
+
+Process Information:
+	Process ID:	0xa34
+	Process Name:	C:\Windows\System32\conhost.exe
+	Exit Status:	0x0
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4689
+EventType=0
+Type=Information
+ComputerName=win-host-987.attackrange.local
+TaskCategory=Process Termination
+OpCode=Info
+RecordNumber=3702912
+Keywords=Audit Success
+Message=A process has exited.
+
+Subject:
+	Security ID:		ATTACKRANGE\Administrator
+	Account Name:		Administrator
+	Account Domain:		ATTACKRANGE
+	Logon ID:		0xA78EA19
+
+Process Information:
+	Process ID:	0x68
+	Process Name:	C:\Windows\System32\winrshost.exe
+	Exit Status:	0x0
+
+
+
+[[Ipconfig and cmd on final target closing]]
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4689
+EventType=0
+Type=Information
+ComputerName=win-host-987.attackrange.local
+TaskCategory=Process Termination
+OpCode=Info
+RecordNumber=3702911
+Keywords=Audit Success
+Message=A process has exited.
+
+Subject:
+	Security ID:		ATTACKRANGE\Administrator
+	Account Name:		Administrator
+	Account Domain:		ATTACKRANGE
+	Logon ID:		0xA78EA19
+
+Process Information:
+	Process ID:	0x580
+	Process Name:	C:\Windows\System32\cmd.exe
+	Exit Status:	0x0
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4689
+EventType=0
+Type=Information
+ComputerName=win-host-987.attackrange.local
+TaskCategory=Process Termination
+OpCode=Info
+RecordNumber=3702910
+Keywords=Audit Success
+Message=A process has exited.
+
+Subject:
+	Security ID:		ATTACKRANGE\Administrator
+	Account Name:		Administrator
+	Account Domain:		ATTACKRANGE
+	Logon ID:		0xA78EA19
+
+Process Information:
+	Process ID:	0xa84
+	Process Name:	C:\Windows\System32\ipconfig.exe
+	Exit Status:	0x0
+
+
+[[Logoff after ran]]
+
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4634
+EventType=0
+Type=Information
+ComputerName=win-host-987.attackrange.local
+TaskCategory=Logoff
+OpCode=Info
+RecordNumber=3702904
+Keywords=Audit Success
+Message=An account was logged off.
+
+Subject:
+	Security ID:		ATTACKRANGE\Administrator
+	Account Name:		Administrator
+	Account Domain:		ATTACKRANGE
+	Logon ID:		0x973CF3A
+
+Logon Type:			3
+
+
+
+[Winrs on original computer closing]
+
+11/12/2021 06:04:12 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4689
+EventType=0
+Type=Information
+ComputerName=win-dc-128.attackrange.local
+TaskCategory=Process Termination
+OpCode=Info
+RecordNumber=1512111044
+Keywords=Audit Success
+Message=A process has exited.
+
+Subject:
+	Security ID:		ATTACKRANGE\Administrator
+	Account Name:		Administrator
+	Account Domain:		ATTACKRANGE
+	Logon ID:		0x809F9
+
+Process Information:
+	Process ID:	0xe00
+	Process Name:	C:\Windows\System32\winrs.exe
+	Exit Status:	0x0
+
+
+
+
+[[Lsass binding to handle authentication, excluded because 6:04:13pm may confuse people]]
+
+11/12/2021 06:04:13 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=5156
+EventType=0
+Type=Information
+ComputerName=win-dc-128.attackrange.local
+TaskCategory=Filtering Platform Connection
+OpCode=Info
+RecordNumber=1512111045
+Keywords=Audit Success
+Message=The Windows Filtering Platform has permitted a connection.
+
+Application Information:
+	Process ID:		636
+	Application Name:	\device\harddiskvolume1\windows\system32\lsass.exe
+
+Network Information:
+	Direction:		Inbound
+	Source Address:		10.0.1.15
+	Source Port:		56783
+	Destination Address:	10.0.1.14
+	Destination Port:		49666
+	Protocol:		6
+
+Filter Information:
+	Filter Run-Time ID:	66884
+	Layer Name:		Receive/Accept
+	Layer Run-Time ID:	44
+
+
+
+
+[[One of the DLL closes and a logoff (of system account) on original machine]]
+
+11/12/2021 06:04:17 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4689
+EventType=0
+Type=Information
+ComputerName=win-host-987.attackrange.local
+TaskCategory=Process Termination
+OpCode=Info
+RecordNumber=3702914
+Keywords=Audit Success
+Message=A process has exited.
+
+Subject:
+	Security ID:		NT AUTHORITY\SYSTEM
+	Account Name:		WIN-HOST-987$
+	Account Domain:		ATTACKRANGE
+	Logon ID:		0x3E7
+
+Process Information:
+	Process ID:	0x12a0
+	Process Name:	C:\Windows\System32\dllhost.exe
+	Exit Status:	0x0
+
+11/12/2021 06:04:17 PM
+LogName=Security
+SourceName=Microsoft Windows security auditing.
+EventCode=4634
+EventType=0
+Type=Information
+ComputerName=win-dc-128.attackrange.local
+TaskCategory=Logoff
+OpCode=Info
+RecordNumber=1512111046
+Keywords=Audit Success
+Message=An account was logged off.
+
+Subject:
+	Security ID:		NT AUTHORITY\SYSTEM
+	Account Name:		WIN-DC-128$
+	Account Domain:		ATTACKRANGE
+	Logon ID:		0x9968C34
+
+Logon Type:			3

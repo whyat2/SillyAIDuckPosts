@@ -1,0 +1,292 @@
+Note each of these got replaced with DuckCompany.archived.oldwebsite.com
+and are from https://docs.zeek.org/en/master/reference/logs/dns.html
+
+[[dns log]]
+{
+  "ts": 1774911641.78917,
+  "uid": "CHhAvVGS1DHFjwGM9",
+  "id.orig_h": "172.17.0.2",
+  "id.orig_p": 36844,
+  "id.resp_h": "1.1.1.1",
+  "id.resp_p": 53,
+  "proto": "udp",
+  "trans_id": 54060,
+  "query": "DuckCompany.archived.oldwebsite.com",
+  "qclass": 1,
+  "qclass_name": "C_INTERNET",
+  "qtype": 28,
+  "qtype_name": "AAAA",
+  "rcode": 0,
+  "rcode_name": "NOERROR",
+  "AA": false,
+  "TC": false,
+  "RD": true,
+  "RA": false,
+  "Z": 2,
+  "rejected": false,
+  "opcode": 0,
+  "opcode_name": "query"
+}
+
+[[Http log]]
+{
+  "ts": 1591367999.512593,
+  "uid": "C5bLoe2Mvxqhawzqqd",
+  "id.orig_h": "192.168.4.76",
+  "id.orig_p": 46378,
+  "id.resp_h": "31.3.245.133",
+  "id.resp_p": 80,
+  "trans_depth": 1,
+  "method": "GET",
+  "host": "DuckCompany.archived.oldwebsite.com",
+  "uri": "/",
+  "version": "1.1",
+  "user_agent": "curl/7.47.0",
+  "request_body_len": 0,
+  "response_body_len": 39,
+  "status_code": 200,
+  "status_msg": "OK",
+  "tags": [],
+  "resp_fuids": [
+    "FEEsZS1w0Z0VJIb5x4"
+  ],
+  "resp_mime_types": [
+    "text/plain"
+  ]
+}
+
+[[ssl log likely an https one]]
+{
+  "ts": 1598377391.716515,
+  "uid": "CsukF91Bx9mrqdEaH9",
+  "id.orig_h": "192.168.4.49",
+  "id.orig_p": 56718,
+  "id.resp_h": "13.32.202.10",
+  "id.resp_p": 443,
+  "proto": "tcp",
+  "service": "ssl",
+  "duration": 0.497269868850708,
+  "orig_bytes": 929,
+  "resp_bytes": 31113,
+  "conn_state": "SF",
+  "missed_bytes": 0,
+  "history": "ShADadfF",
+  "orig_pkts": 37,
+  "orig_ip_bytes": 2861,
+  "resp_pkts": 34,
+  "resp_ip_bytes": 32889
+}
+
+Shared fields
+
+ts
+uid
+id.orig_h
+id.orig_p
+id.resp_h
+id.resp_p
+
+Shared kinda:
+proto: between DNS and SSL
+
+
+Hint: 
+
+Timestamps are in Unix time which can be looked up online,
+ or gotten from converting seconds after January 1, 1970 UTC (we are 5 hours behind UTC)
+
+Just give them one of the early fields if need more hints
+
+
+Key:
+Note times done with [DateTimeOffset]::FromUnixTimeSeconds(1792780800).ToLocalTime() (powershell command),
+but can be grabbed anywhere from online
+
+DNS — 1:40 PM Dallas time: 172.16.0.15 queries the DNS server for the company's domain.
+SSL — 1:41:40 PM Dallas time: The same origin host connects to the HTTPS server.
+HTTP — 6:40 PM Dallas time: 172.16.0.16 sends a successful HTTP GET request to the same domain.
+
+Attack is the HTTP log to DuckCompany.archived.oldwebsite.com
+
+1792780800.0 for the dns log (that day at like pretty early)
+1792780900.0 for ssl log (since dns and ssl are non-malicious since not downgrade)
+1792798800.0 for the http log (recent)
+
+CHhAvVGS1DHFjwGM9 dns uid
+C5bLoe2Mvxqhawzqqd http uid
+CsukF91Bx9mrqdEaH9 ssl uid
+
+172.16.0.15 origin of dns log
+172.16.0.15 origin of ssl log
+172.16.0.16 origin of http log
+
+49822 is port of dns income
+46378 is port of ssl income
+55109 is port of http income
+
+53 port of dns (public facing)
+80 port of http
+443 port of ssl
+
+203.0.113.53 ip of dns (public facing)
+93.184.216.34 ip of http
+93.184.216.34 ip of ssl
+
+udp is proto in dns
+tcp is proto in ssl
+
+Pilot is guilt in thing below since 172.16.0.16 at 6:40 PM
+
+Confusion on puzzle for UIDs (which check everything to get UID (which is then used for IP))
+A log with a 4 and a 8 in its port number has a UID of CHhAvVGS1DHFjwGM9 (DNS or SSL)
+A log with a timestamp ending in 800.0 has a UID of C5bLoe2Mvxqhawzqqd (HTTP or DNS)
+A log with a response IP of 203.0.113.53 cannot have the ID CsukF91Bx9mrqdEaH9 (not DNS)
+A log with a response an incoming port beginning in 5 doesn't have a UID with "suk" in it (HTTP is not the not DNS one)
+
+[[Actual Puzzle]]
+
+An advanced hacker curled our domain to get info
+
+Engineer was on 172.16.0.15 at 1:40-5:00 PM
+IT was on 172.16.0.16 at 1:00-5:30 PM
+Pilot was on 172.16.0.16 at 5:30-6:45 PM
+Chef was on 172.16.0.15 at 5:00-8:30 PM
+
+Figure out who did the malicious attack
+Use the clues and bank to fill out the logs [blank] and solve them
+
+Clues
+Proto: 
+Standard proto for said service
+
+Response Ports:
+The responder ports are the standard/typical ports for said service
+
+Time:
+The timestamp of the log that uses UDP is 1792780800.0
+The log representing encrypted information has a timestamp of 1792780900.0
+A log with the respond IP 93.184.216.34 has a timestamp of 1792798800.0
+
+Response IP:
+The log that occurs 1:40pm our time is the log with a 203.0.113.53 response IP
+
+Incoming Ports:
+The log with a recursion desired flag set has an incoming port of 49822
+The log with a responder port of 443 has an incoming port of 55109
+The log that with over 30 packets passed back and forth has an incoming port of 46378
+
+Origin Ports:
+A log with a 4 and a 8 in its port number has a UID of CHhAvVGS1DHFjwGM9
+A log with a timestamp ending in 800.0 has a UID of C5bLoe2Mvxqhawzqqd
+A log with a response IP of 203.0.113.53 cannot have the UID CsukF91Bx9mrqdEaH9
+A log with a response an incoming port beginning in 5 doesn't have a UID with "suk" in it
+
+Origin IP:
+The log with a UID of CHhAvVGS1DHFjwGM9 corresponds with 172.16.0.15
+The log with a UID of CsukF91Bx9mrqdEaH9 corresponds with 172.16.0.15
+The log with a UID of C5bLoe2Mvxqhawzqqd corresponds with 172.16.0.16
+
+Bank:
+
+1792780800.0
+1792780900.0
+1792798800.0
+
+CHhAvVGS1DHFjwGM9
+C5bLoe2Mvxqhawzqqd
+CsukF91Bx9mrqdEaH9 
+
+172.16.0.15 
+172.16.0.15
+172.16.0.16 
+
+49822 
+46378
+55109 
+
+53 
+80
+443
+
+203.0.113.53 
+93.184.216.34 
+93.184.216.34
+
+udp
+tcp
+
+Logs
+
+{
+  "ts": "[blank]",
+  "uid": "[blank]",
+  "id.orig_h": "[blank]",
+  "id.orig_p": "[blank]",
+  "id.resp_h": "[blank]",
+  "id.resp_p": "[blank]",
+  "proto": "[blank]",
+  "trans_id": 54060,
+  "query": "DuckCompany.archived.oldwebsite.com",
+  "qclass": 1,
+  "qclass_name": "C_INTERNET",
+  "qtype": 28,
+  "qtype_name": "AAAA",
+  "rcode": 0,
+  "rcode_name": "NOERROR",
+  "AA": false,
+  "TC": false,
+  "RD": true,
+  "RA": false,
+  "Z": 2,
+  "rejected": false,
+  "opcode": 0,
+  "opcode_name": "query"
+}
+
+{
+  "ts": "[blank]",
+  "uid": "[blank]",
+  "id.orig_h": "[blank]",
+  "id.orig_p": "[blank]",
+  "id.resp_h": "[blank]",
+  "id.resp_p": "[blank]",
+  "proto": "[blank]",
+  "trans_depth": 1,
+  "method": "GET",
+  "host": "DuckCompany.archived.oldwebsite.com",
+  "uri": "/",
+  "version": "1.1",
+  "user_agent": "curl/7.47.0",
+  "request_body_len": 0,
+  "response_body_len": 39,
+  "status_code": 200,
+  "status_msg": "OK",
+  "tags": [],
+  "resp_fuids": [
+    "FEEsZS1w0Z0VJIb5x4"
+  ],
+  "resp_mime_types": [
+    "text/plain"
+  ]
+}
+
+{
+  "ts": "[blank]",
+  "uid": "[blank]",
+  "id.orig_h": "[blank]",
+  "id.orig_p": "[blank]",
+  "id.resp_h": "[blank]",
+  "id.resp_p": "[blank]",
+  "proto": "[blank]",
+  "service": "ssl",
+  "duration": 0.497269868850708,
+  "orig_bytes": 929,
+  "resp_bytes": 31113,
+  "conn_state": "SF",
+  "missed_bytes": 0,
+  "history": "ShADadfF",
+  "orig_pkts": 37,
+  "orig_ip_bytes": 2861,
+  "resp_pkts": 34,
+  "resp_ip_bytes": 32889
+}
